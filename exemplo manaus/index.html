@@ -1,0 +1,151 @@
+<html>
+
+<head>
+
+    <title>Maps</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link
+            href="assets/css/bootstrap.min.css"
+            rel="stylesheet"
+    >
+    <script
+            src="assets/js/bootstrap.bundle.min.js"
+    ></script>
+    <script src="data.js"></script>
+    <script src="graph.js"></script>
+    <script src="routing.js"></script>
+</head>
+
+<body>
+<style>
+    #map {
+        height: 80%;
+        width: 100%;
+    }
+</style>
+
+<div class="container pt-1">
+    <h5>
+        Busca de caminho mais curto que calcula todos os vértices
+        intermediários a serem percorridos usando o algoritmo de caminho mais curto de Dijkstra.
+    </h5>
+
+
+    <div class="d-flex flex-row justify-content-center">
+        <div class="col-4">
+            <label for="end_point">Digite o ID do marcador destino:</label>
+            <div class="input-group mb-3">
+                <input
+                        type="text"
+                        id="end_point"
+                        class="form-control"
+                >
+                <button class="input-group-text btn btn-success" id="getRoute">Buscar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="map">
+        <marker></marker>
+    </div>
+</div>
+<script
+        async
+        defer
+        type="application/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqa_nSXikMRhGuFK_UtuHf9mzOIyzpp5I&libraries=drawing&callback=initMap">
+</script>
+<script>
+    var customLabel = {
+        terminal: {
+            label: 'T'
+        }
+    };
+
+    var airport = {
+        lat: -3.117034,
+        lng: -60.025780
+    };
+
+    var Path; // Polyline
+    var map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: airport,
+            mapTypeId: 'terrain'
+        });
+
+        //map.data.loadGeoJson(data);
+
+        var markers = document.getElementsByTagName('marker');
+
+
+        for (var i = 0; i < data.features.length; i++) {  // Precisa encontrar uma maneira melhor de comparar se o marcador T já está colocado
+            var token = false;
+
+            var coords = data.features[i].geometry.coordinates;
+            var latLng = new google.maps.LatLng(coords[1], coords[0]);
+
+            var lat_t = parseFloat(latLng.lat());
+            var lng_t = parseFloat(latLng.lng());
+
+            Array.prototype.forEach.call(markers, function (markerElem) {
+             
+                var point = new google.maps.LatLng(
+                    Number(markerElem.getAttribute('lat')),
+                    parseFloat(markerElem.getAttribute('lng'))
+                );
+
+                var lat_p = Number(point.lat());
+                var lng_p = parseFloat(point.lng());
+
+                if (lat_t == lat_p && lng_t == lng_p) {
+                    token = true;
+                }
+            });
+
+            if (token == false) {
+                var marker = new google.maps.Marker({
+                    position: latLng,
+                    map: map,
+                    label: i.toString()
+                });
+            }
+        }
+
+        /*---------------------------------------------------------------------------------------------*/
+
+        Path = new google.maps.Polyline({
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+
+        Path.setMap(map);
+
+        // Esta seção está relacionada ao roteamento da entrada à saída
+
+        var submit_button = document.getElementById('getRoute');
+
+        google.maps.event.addDomListener(submit_button, 'click', function () {
+            path_temp = route_setup();
+
+            for (var i = 0; i < path_temp.length; ++i) {
+                var latLng_temp = new google.maps.LatLng(path_temp[i].lat, path_temp[i].lng);
+
+                var line = Path.getPath();
+                line.push(latLng_temp);
+            }
+        });
+    }
+</script>
+
+</body>
+
+</html>
