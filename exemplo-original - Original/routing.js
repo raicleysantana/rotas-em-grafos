@@ -1,23 +1,24 @@
-var graph = new DirectedGraph(); //Requerido pelo conector
+var graph    = new DirectedGraph(); //Requerido pelo conector
 var INFINITY = 1 / 0;
-var x_path = [];
+var x_path   = [];
 
 function route_setup() {
 
     var start_point = parseInt(document.getElementById("start_point").value);
-    var end_point = parseInt(document.getElementById("end_point").value);
+    var end_point   = parseInt(document.getElementById("end_point").value);
 
     var old_end = end_point;
 
      if(start_point > end_point){
-         end_point = start_point;
+         end_point   = start_point;
          start_point = old_end;
      }
 
     connector();
     //console.log("crossed conn");
     var out = djikstra(graph, start_point);
-    //console.log("crossed djikstra");
+    console.log("crossed djikstra");
+
     for (i = 0; i < data.features.length; i++) {
         for (j = 0; j < out.shortestPaths[end_point].length; j++) {
             if (String(i) == out.shortestPaths[end_point][j]) {
@@ -29,6 +30,7 @@ function route_setup() {
             }
         }
     }
+
     x_path.push({
         lat: data.features[end_point].geometry.coordinates[1],
         lng: data.features[end_point].geometry.coordinates[0]
@@ -46,22 +48,22 @@ function DirectedGraph() {
 }
 
 function djikstra(graph, startVertex) {
-    var dist = {};
-    var prev = {};
-    var q = {};
+    var dist          = {};
+    var prev          = {};
+    var q             = {};
     var shortestPaths = {};
 
     for (var vertex in graph.vertices) {
-        dist[vertex] = INFINITY;
-        prev[vertex] = null;
-        q[vertex] = graph.vertices[vertex];
+        dist[vertex]          = INFINITY;
+        prev[vertex]          = null;
+        q[vertex]             = graph.vertices[vertex];
         shortestPaths[vertex] = [];
     }
 
     dist[startVertex] = 0;
 
     while (Object.keys(q).length !== 0) {
-        var smallest = findSmallest(dist, q);
+        var smallest     = findSmallest(dist, q);
         var smallestNode = graph.vertices[smallest];
         //procura o vértice u no conjunto de vértices Q que tem o menor valor dist[smallest].
 
