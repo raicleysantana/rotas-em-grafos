@@ -7,10 +7,17 @@ function route_setup() {
     var start_point = parseInt(document.getElementById("start_point").value);
     var end_point = parseInt(document.getElementById("end_point").value);
 
+    var old_end = end_point;
+
+     if(start_point > end_point){
+         end_point = start_point;
+         start_point = old_end;
+     }
+
     connector();
-    console.log("crossed conn");
+    //console.log("crossed conn");
     var out = djikstra(graph, start_point);
-    console.log("crossed djikstra");
+    //console.log("crossed djikstra");
     for (i = 0; i < data.features.length; i++) {
         for (j = 0; j < out.shortestPaths[end_point].length; j++) {
             if (String(i) == out.shortestPaths[end_point][j]) {

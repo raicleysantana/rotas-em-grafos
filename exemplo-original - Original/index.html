@@ -15,6 +15,11 @@
 
 <body>
     <style>
+        /*body {
+            color: #FFF;
+            background-color: #232424;
+        }*/
+
         #map {
             height: 80%;
             width: 100%;
@@ -89,7 +94,7 @@
                 var lat_t = parseFloat(latLng.lat());
                 var lng_t = parseFloat(latLng.lng());
 
-                Array.prototype.forEach.call(markers, function (markerElem) {
+                Array.prototype.forEach.call(markers, function(markerElem) {
 
                     var point = new google.maps.LatLng(
                         Number(markerElem.getAttribute('lat')),
@@ -128,10 +133,11 @@
 
             var submit_button = document.getElementById('getRoute');
 
-            google.maps.event.addDomListener(submit_button, 'click', function () {
+            google.maps.event.addDomListener(submit_button, 'click', function() {
                 path_temp = route_setup();
 
                 for (var i = 0; i < path_temp.length; ++i) {
+                    console.log(path_temp[i]);
                     var latLng_temp = new google.maps.LatLng(path_temp[i].lat, path_temp[i].lng);
 
                     var line = Path.getPath();
